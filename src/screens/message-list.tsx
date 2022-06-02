@@ -32,7 +32,7 @@ export function MessageList(props: MessageListProps) {
       .value();
   }, [props.messages]);
 
-  const renderItem = useCallback((item) => {
+  const renderItem = useCallback((item: Message) => {
     if (isImage(item)) {
       return <MessageItemImage item={item} />;
     }
@@ -40,10 +40,12 @@ export function MessageList(props: MessageListProps) {
     //   return <MessageItemVideo item={item} />;
     // }
 
+    // @ts-ignore
     if (item.type === 'carousel') {
       return <MessageItemCarousel item={item} />;
     }
 
+    // @ts-ignore
     if (item.type === 'system_event') {
       return <MessageItemSystemEvent item={item} />;
     }

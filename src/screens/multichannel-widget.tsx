@@ -102,11 +102,7 @@ export function MultichannelWidget(props: MultichannelWidgetProps) {
   return (
     <View style={{ flex: 1, position: 'relative', marginTop: 0 }}>
       <View style={styles.container}>
-        <Header
-          title={appTitle}
-          subtitle={appSubtitleText}
-          onBack={props.onBack}
-        />
+        <Header title={appTitle} onBack={props.onBack} />
         {isEmpty && <EmptyChat />}
         {!isEmpty && (
           <MessageList messages={messages ?? []} onLoadMore={onLoadMore} />
@@ -130,8 +126,13 @@ export function MultichannelWidget(props: MultichannelWidgetProps) {
 
 function EmptyChat() {
   const [baseBgColor] = useAtom(baseColorThemeAtom);
+  let containerStyle = useMemo(
+    () => ({ ...styles.emptyContainer, backgroundColor: baseBgColor }),
+    [baseBgColor]
+  );
+
   return (
-    <View style={{ ...styles.emptyContainer, backgroundColor: baseBgColor }}>
+    <View style={containerStyle}>
       <Text style={styles.emptyText1}>No message here yet...</Text>
       <Text style={styles.emptyText2}>
         Great discussion start from greeting each others first

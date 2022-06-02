@@ -1,5 +1,5 @@
 import format from 'date-fns/format';
-import { useAtomValue } from 'jotai/utils';
+import { useAtom } from 'jotai';
 import React, { PropsWithChildren, useMemo } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { useBubbleBgColor } from '../../hooks/use-bubble-bg-color';
@@ -34,9 +34,9 @@ export function ChatBubble(props: IProps) {
   const status = useMemo(() => props.message.status, [props.message]);
 
   const bubbleBgColor = useBubbleBgColor(props.message.sender?.id);
-  const timeFgColor = useAtomValue(timeLabelTextColorThemeAtom);
-  const timeBgColor = useAtomValue(timeBackgroundColorThemeAtom);
-  const showAvatar = useAtomValue(roomSenderAvatarEnabledAtom);
+  const [timeFgColor] = useAtom(timeLabelTextColorThemeAtom);
+  const [timeBgColor] = useAtom(timeBackgroundColorThemeAtom);
+  const [showAvatar] = useAtom(roomSenderAvatarEnabledAtom);
 
   const containerSide = useMemo(() => {
     return isSelf ? 'flex-end' : 'flex-start';

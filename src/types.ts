@@ -8,9 +8,9 @@ import type {
 } from 'qiscus-sdk-javascript';
 export type { QiscusSDK, Room, User, Account, Participant };
 
-export type Message = {
-  type: IQMessage['type'] | 'carousel';
-} & IQMessage;
+export type Message = IQMessage & {
+  type: IQMessage['type'] | 'carousel' | 'system_event';
+};
 
 export enum IRoomSubtitleConfig {
   Enabled = 'enabled',

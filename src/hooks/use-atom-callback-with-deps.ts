@@ -10,5 +10,5 @@ export function useAtomCallbackWithDeps<Arg, Ret>(
   cb: ICb<Arg, Ret>,
   deps: unknown[]
 ) {
-  return useAtomCallback(useCallback(cb, [cb, ...deps]));
+  return useAtomCallback(useCallback(cb, [cb, deps]));
 }

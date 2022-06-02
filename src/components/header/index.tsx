@@ -1,4 +1,4 @@
-import { useAtomValue } from 'jotai/utils';
+import { atom, useAtom } from 'jotai';
 import * as React from 'react';
 import { useMemo } from 'react';
 import {
@@ -10,9 +10,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import { useCurrentUser } from '../../hooks';
 import { useComputedAtomValue } from '../../hooks/use-computed-atom-value';
 import {
-  currentUserAtom,
   navigationColorThemeAtom,
   navigationTitleColorThemeAtom,
   roomSubtitleConfigAtom,
@@ -27,76 +27,74 @@ import { IRoomSubtitleConfig } from '../../types';
 type IProps = {
   height?: number;
   title?: string;
-  subtitle?: string;
   onBack: () => void;
 };
 
-export function Header({ height, title, subtitle, onBack }: IProps) {
-  const navigationBgColor = useAtomValue(navigationColorThemeAtom);
-  const containerStyle: StyleProp<ViewStyle> = useMemo(() => {
-    const style = { ...styles.container, backgroundColor: navigationBgColor };
-    if (height != null) style.height = height;
-    return style;
-  }, [navigationBgColor, height]);
+export const Header = React.memo(
+  function Header({ height, title, onBack }: IProps) {
+    const [navigationBgColor] = useAtom(navigationColorThemeAtom);
+    const containerStyle: StyleProp<ViewStyle> = useMemo(() => {
+      const style = { ...styles.container, backgroundColor: navigationBgColor };
+      if (height != null) style.height = height;
+      return style;
+    }, [navigationBgColor, height]);
 
-  return (
-    <View style={containerStyle}>
-      <TouchableOpacity style={styles.backBtn} onPress={onBack}>
-        <Image source={require('../../assets/arrow-left.png')} />
-        <Avatar />
-      </TouchableOpacity>
-      <View style={styles.contentContainer}>
-        <Content title={title} subtitle={subtitle} />
+    const _title = useTitle(title);
+    const _subtitle = useSubtitle();
+
+    return (
+      <View style={containerStyle}>
+        <TouchableOpacity style={styles.backBtn} onPress={onBack}>
+          <Image source={require('../../assets/arrow-left.png')} />
+          <Avatar />
+        </TouchableOpacity>
+        <View style={styles.contentContainer}>
+          <Content title={_title} subtitle={_subtitle} />
+        </View>
       </View>
-    </View>
-  );
-}
+    );
+  },
+  (prev, next) => prev.title === next.title
+);
 
 function Avatar() {
-  const isLoggedIn = useComputedAtomValue(
-    (get) => get(currentUserAtom) != null
+  const user = useCurrentUser();
+  const isLoggedIn = useMemo(() => user != null, [user]);
+  const avatarUrl = useMemo(
+    () =>
+      isLoggedIn
+        ? require('../../assets/chat_connecting.png')
+        : require('../../assets/defaultAvatar.png'),
+    [isLoggedIn]
   );
 
   return (
     <View style={styles.avatarContainer}>
-      {!isLoggedIn && (
-        <Image
-          style={styles.avatar}
-          source={require('../../assets/chat_connecting.png')}
-        />
-      )}
-      {isLoggedIn && (
-        <Image
-          style={styles.avatar}
-          source={require('../../assets/defaultAvatar.png')}
-        />
-      )}
+      <Image style={styles.avatar} source={avatarUrl} />
     </View>
   );
 }
 
-function Content(props: { title?: string; subtitle?: string }) {
-  const navigationFgColor = useAtomValue(navigationTitleColorThemeAtom);
+function Content(props: { title: string; subtitle: string }) {
+  const [navigationFgColor] = useAtom(navigationTitleColorThemeAtom);
+  const user = useCurrentUser();
+  const isConnecting = useMemo(() => user == null, [user]);
 
-  const isConnecting = useComputedAtomValue(
-    (get) => get(currentUserAtom) == null
+  const titleStyle = useMemo(
+    () => ({ ...styles.title, color: navigationFgColor }),
+    [navigationFgColor]
   );
-  const title = useTitle(props.title);
-  const subtitle = useSubtitle(props.subtitle);
+  const subtitleStyle = useMemo(
+    () => ({ ...styles.subtitle, color: navigationFgColor }),
+    [navigationFgColor]
+  );
 
   return (
     <View style={styles.content}>
-      <Text style={{ ...styles.title, color: navigationFgColor }}>{title}</Text>
-      {!isConnecting && (
-        <Text style={{ ...styles.subtitle, color: navigationFgColor }}>
-          {subtitle}
-        </Text>
-      )}
-      {isConnecting && (
-        <Text style={{ ...styles.subtitle, color: navigationFgColor }}>
-          Connecting...
-        </Text>
-      )}
+      <Text style={titleStyle}>{props.title}</Text>
+      <Text style={subtitleStyle}>
+        {isConnecting ? 'Connecting...' : props.subtitle}
+      </Text>
     </View>
   );
 }
@@ -109,6 +107,7 @@ function useTitle(title?: string) {
     return get(titleAtom);
   });
 }
+
 function useSubtitle(subtitle?: string) {
   return useComputedAtomValue((get) => {
     const roomSubtitleConfig = get(roomSubtitleConfigAtom);

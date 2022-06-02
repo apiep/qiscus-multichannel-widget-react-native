@@ -1,25 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import debounce from 'lodash/debounce';
 
 export function useDebounceValue<T>(value: T, delay: number = 1000) {
   // State and setters for debounced value
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  const debouncedValue = useRef(value);
 
-  useEffect(
-    () => {
-      // Update debounced value after delay
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
+  // prettier-ignore
+  useEffect(debounce(() => {
+    debouncedValue.current = value
+  }, delay), [value]);
 
-      // Cancel the timeout if value changes (also on delay change or unmount)
-      // This is how we prevent debounced value from updating if value is changed ...
-      // .. within the delay period. Timeout gets cleared and restarted.
-      return () => {
-        clearTimeout(handler);
-      };
-    },
-    [value, delay] // Only re-call effect if value or delay changes
-  );
-
-  return debouncedValue;
+  return debouncedValue.current;
 }

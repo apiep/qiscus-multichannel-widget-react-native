@@ -1,21 +1,82 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import invariant from 'invariant';
 import { useAtomCallback } from 'jotai/utils';
+import { useMemo, useRef } from 'react';
 import {
+  channelIdAtom,
   currentUserAtom,
+  deviceIdAtom,
   messageExtrasAtom,
   optionsAtom,
   qiscusAtom,
   roomIdAtom,
   STORAGE,
+  userConfigAvatarAtom,
+  userConfigDisplayNameAtom,
+  userConfigIdAtom,
+  userConfigPropertiesAtom,
 } from '../state';
 import type { InitiateChatOptions } from '../types';
+import { useAtomCallbackWithDeps } from './use-atom-callback-with-deps';
+import { useComputedAtomValue } from './use-computed-atom-value';
+import { useCurrentUser } from './use-current-user';
 import { useGetSessions } from './use-get-sessions';
+import { useSetup } from './use-setup';
 import { useUpdateRoomInfo } from './use-update-room-info';
 
 const resolvedText = 'admin marked this conversation as resolved' as const;
 
-export function useInitiateChat() {
+export function useInitiateChat(appId?: string | undefined) {
+  const isInitiating = useRef(false);
+  const user = useCurrentUser();
+  const isLoggedIn = useMemo(() => user != null, [user]);
+
+  const setup = useSetup();
+  const initiateChat_ = _useInitiateChat();
+
+  const initiateChat = useAtomCallbackWithDeps(
+    async (get) => {
+      if (isInitiating.current === true) return;
+      if (isLoggedIn === true) return;
+
+      console.log('isInitiating', isInitiating.current);
+      isInitiating.current = true;
+
+      const userId = get(userConfigIdAtom);
+
+      invariant(
+        appId,
+        'Missing `appId`, make sure you wrap your application inside `MultichannelWidgetProvider`'
+      );
+      invariant(
+        userId,
+        'Missing `userId`, make sure you have invoked `setUser` method'
+      );
+
+      const displayName = get(userConfigDisplayNameAtom);
+      const deviceId = get(deviceIdAtom);
+      const channelId = get(channelIdAtom);
+      const avatar = get(userConfigAvatarAtom);
+      const userProperties = get(userConfigPropertiesAtom);
+
+      await setup(appId!);
+      await initiateChat_({
+        userId: userId!,
+        name: displayName ?? userId!,
+        deviceId,
+        channelId,
+        avatar,
+        userProperties,
+      });
+    },
+    [appId]
+  );
+
+  return initiateChat;
+}
+
+function _useInitiateChat() {
   const updateRoomInfo = useUpdateRoomInfo();
   const getSessions = useGetSessions();
 
@@ -44,7 +105,7 @@ export function useInitiateChat() {
       );
       if (!isSessional) {
         console.log('room are not sessional, using existing room');
-        // await updateRoomInfo();
+        await updateRoomInfo();
         return currentUser;
       }
     }

@@ -3,15 +3,16 @@ import invariant from 'invariant';
 import { Provider } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
 import React, { useEffect } from 'react';
+import { useLog } from './hooks/use-log';
 import { appIdAtom } from './state';
 export { Header } from './components/header/index';
 export {
+  useClearUser,
   useCurrentChatRoom,
   useCurrentUser,
   useDebounceValue,
   useDeleteMessage,
   useDifference,
-  useClearUser,
   useGetUnreadCount,
   useInitiateChat,
   useLoadMoreMessages,
@@ -40,6 +41,7 @@ type IWidgetProviderProps = {
   appId: string;
   children: React.ReactNode;
 };
+
 function WidgetProvider(props: IWidgetProviderProps) {
   const appId = props.appId;
   invariant(appId, 'MultichannelWidgetProvider must have `appId` as a prop');
@@ -47,7 +49,7 @@ function WidgetProvider(props: IWidgetProviderProps) {
   const setAppId = useUpdateAtom(appIdAtom);
   useEffect(() => {
     setAppId(appId);
-  }, [appId, setAppId]);
+  }, [appId]);
 
   return (
     <WidgetContext.Provider value={undefined}>
@@ -58,10 +60,8 @@ function WidgetProvider(props: IWidgetProviderProps) {
 
 export function MultichannelWidgetProvider(props: IWidgetProviderProps) {
   return (
-    <Provider>
-      <PortalProvider>
-        <WidgetProvider {...props} />
-      </PortalProvider>
-    </Provider>
+    <PortalProvider>
+      <WidgetProvider appId={props.appId}>{props.children}</WidgetProvider>
+    </PortalProvider>
   );
 }
