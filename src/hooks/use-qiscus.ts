@@ -1,6 +1,7 @@
-import { useAtomValue } from 'jotai/utils';
+import { useAtom } from 'jotai';
 import { qiscusAtom } from '../state';
 
 export function useQiscus() {
-  return useAtomValue(qiscusAtom);
+  let [data] = useAtom(qiscusAtom);
+  return data;
 }

@@ -1,6 +1,6 @@
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
-import { useAtomValue } from 'jotai/utils';
+import { useAtom } from 'jotai';
 import _, { orderBy } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
@@ -51,8 +51,8 @@ export function MessageList(props: MessageListProps) {
     return <MessageItemText item={item} />;
   }, []);
 
-  const baseBgColor = useAtomValue(baseColorThemeAtom);
-  const baseFgColor = useAtomValue(emptyTextColorThemeAtom);
+  const [baseBgColor] = useAtom(baseColorThemeAtom);
+  const [baseFgColor] = useAtom(emptyTextColorThemeAtom);
 
   return (
     <SectionList

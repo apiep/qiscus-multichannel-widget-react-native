@@ -1,4 +1,4 @@
-import { useAtomValue } from 'jotai/utils';
+import { useAtom } from 'jotai';
 import React, { useState } from 'react';
 import {
   Image,
@@ -22,10 +22,10 @@ type MessageFormProps = {
 export function MessageForm(props: MessageFormProps) {
   const [text, setText] = useState<string>();
 
-  const containerBgColor = useAtomValue(sendContainerBackgroundColorThemeAtom);
-  const containerFgBorderColor = useAtomValue(fieldChatBorderColorThemeAtom);
-  const containerFgColor = useAtomValue(sendContainerColorThemeAtom);
-  const fieldFgColor = useAtomValue(fieldChatTextColorThemeAtom);
+  const [containerBgColor] = useAtom(sendContainerBackgroundColorThemeAtom);
+  const [containerFgBorderColor] = useAtom(fieldChatBorderColorThemeAtom);
+  const [containerFgColor] = useAtom(sendContainerColorThemeAtom);
+  const [fieldFgColor] = useAtom(fieldChatTextColorThemeAtom);
 
   return (
     <View

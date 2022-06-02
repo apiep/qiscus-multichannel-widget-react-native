@@ -1,4 +1,4 @@
-import { useAtomValue } from 'jotai/utils';
+import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { roomAtom } from '../state';
 import type { IUseCurrentChatRoom } from '../types';
@@ -10,7 +10,7 @@ import { useSendMessage } from './use-send-message';
 
 export function useCurrentChatRoom(): IUseCurrentChatRoom {
   const qiscus = useQiscus();
-  const room = useAtomValue(roomAtom);
+  const [room] = useAtom(roomAtom);
   const messages = useMessages();
 
   const sendMessage = useSendMessage();

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import { PortalHost } from '@gorhom/portal';
-import { useAtomValue } from 'jotai/utils';
+import { useAtom } from 'jotai';
 import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { DocumentPickerResponse } from 'react-native-document-picker';
@@ -42,8 +42,8 @@ export function MultichannelWidget(props: MultichannelWidgetProps) {
     await loadMoreMessages(lastMessageId);
   }, [lastMessageId, loadMoreMessages]);
 
-  const appTitle = useAtomValue(roomTitleAtom);
-  const appSubtitleText = useAtomValue(roomSubtitleTextAtom);
+  const [appTitle] = useAtom(roomTitleAtom);
+  const [appSubtitleText] = useAtom(roomSubtitleTextAtom);
 
   const isEmpty = useMemo(() => messages.length === 0, [messages]);
 
@@ -129,7 +129,7 @@ export function MultichannelWidget(props: MultichannelWidgetProps) {
 }
 
 function EmptyChat() {
-  const baseBgColor = useAtomValue(baseColorThemeAtom);
+  const [baseBgColor] = useAtom(baseColorThemeAtom);
   return (
     <View style={{ ...styles.emptyContainer, backgroundColor: baseBgColor }}>
       <Text style={styles.emptyText1}>No message here yet...</Text>

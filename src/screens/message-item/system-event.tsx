@@ -1,4 +1,4 @@
-import { useAtomValue } from 'jotai/utils';
+import { useAtom } from 'jotai';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
@@ -12,8 +12,8 @@ type MessageItemSystemEventProps = {
 };
 
 export function MessageItemSystemEvent(props: MessageItemSystemEventProps) {
-  const baseFgColor = useAtomValue(timeLabelTextColorThemeAtom);
-  const isHidden = useAtomValue(roomSystemEventHiddenAtom);
+  const [baseFgColor] = useAtom(timeLabelTextColorThemeAtom);
+  const [isHidden] = useAtom(roomSystemEventHiddenAtom);
 
   if (isHidden) {
     return null;
