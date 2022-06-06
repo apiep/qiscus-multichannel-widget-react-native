@@ -8,11 +8,7 @@ import { AttachmentMenu } from '../components/attachment-menu';
 import { Header } from '../components/header/index';
 import { useCurrentChatRoom } from '../hooks/use-current-chatroom';
 import { useQiscus } from '../hooks/use-qiscus';
-import {
-  baseColorThemeAtom,
-  roomSubtitleTextAtom,
-  roomTitleAtom,
-} from '../state';
+import { baseColorThemeAtom, roomTitleAtom } from '../state';
 import { MessageForm } from './message-form';
 import { MessageList } from './message-list';
 
@@ -43,7 +39,6 @@ export function MultichannelWidget(props: MultichannelWidgetProps) {
   }, [lastMessageId, loadMoreMessages]);
 
   const [appTitle] = useAtom(roomTitleAtom);
-  const [appSubtitleText] = useAtom(roomSubtitleTextAtom);
 
   const isEmpty = useMemo(() => messages.length === 0, [messages]);
 

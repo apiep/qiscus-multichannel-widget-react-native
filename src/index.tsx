@@ -1,9 +1,7 @@
 import { PortalProvider } from '@gorhom/portal';
 import invariant from 'invariant';
-import { Provider } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
 import React, { useEffect } from 'react';
-import { useLog } from './hooks/use-log';
 import { appIdAtom } from './state';
 export { Header } from './components/header/index';
 export {

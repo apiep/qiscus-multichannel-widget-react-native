@@ -6,7 +6,7 @@ import {
   roomIdAtom,
   STORAGE,
 } from '../state';
-import { Account } from '../types';
+import type { Account } from '../types';
 import { useAtomCallbackWithDeps } from './use-atom-callback-with-deps';
 import { useSetUser } from './use-set-user';
 import { useUpdateRoomInfo } from './use-update-room-info';

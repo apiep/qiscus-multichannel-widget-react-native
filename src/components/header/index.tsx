@@ -1,4 +1,4 @@
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import * as React from 'react';
 import { useMemo } from 'react';
 import {
@@ -75,7 +75,7 @@ function Avatar() {
   );
 }
 
-function Content(props: { title: string; subtitle: string }) {
+function Content(props: { title: string; subtitle: string | null }) {
   const [navigationFgColor] = useAtom(navigationTitleColorThemeAtom);
   const user = useCurrentUser();
   const isConnecting = useMemo(() => user == null, [user]);
