@@ -19,7 +19,6 @@ import {
 } from '../state';
 import type { InitiateChatOptions } from '../types';
 import { useAtomCallbackWithDeps } from './use-atom-callback-with-deps';
-import { useComputedAtomValue } from './use-computed-atom-value';
 import { useCurrentUser } from './use-current-user';
 import { useGetSessions } from './use-get-sessions';
 import { useSetup } from './use-setup';
