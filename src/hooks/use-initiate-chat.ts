@@ -4,6 +4,7 @@ import invariant from 'invariant';
 import { useAtomCallback } from 'jotai/utils';
 import { useMemo, useRef } from 'react';
 import {
+  appIdAtom,
   channelIdAtom,
   currentUserAtom,
   deviceIdAtom,
@@ -39,7 +40,11 @@ export function useInitiateChat(appId?: string | undefined) {
       if (isInitiating.current === true) return;
       if (isLoggedIn === true) return;
 
-      console.log('isInitiating', isInitiating.current);
+      let _appId = get(appIdAtom);
+      if (_appId != null && appId == null) {
+        appId = _appId;
+      }
+
       isInitiating.current = true;
 
       const userId = get(userConfigIdAtom);
